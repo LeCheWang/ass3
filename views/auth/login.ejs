@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form onsubmit="return false;">
+      <input id="username" type="text" placeholder="username" />
+      <input id="password" type="text" placeholder="password" />
+      <button onclick="login()">Login</button>
+    </form>
+  </body>
+  <script>
+    function login() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+      const data = {
+        username,
+        password,
+      };
+      console.log(data);
+
+      fetch('/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          if (result.statusCode === 200) {
+            alert(result.message);
+            localStorage.setItem('jwt', result.jwt);
+            window.location.href = '/home';
+          }
+        })
+        .catch((error) => {
+          alert(error.message);
+        });
+    }
+  </script>
+</html>
