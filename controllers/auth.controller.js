@@ -42,6 +42,7 @@ module.exports = {
       statusCode: 200,
       message: 'Đăng nhập thành công',
       jwt: token,
+      ...payload
     });
   },
 };

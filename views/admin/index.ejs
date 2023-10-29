@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Welcome admin</h1>
+
+    <h1>Create Category</h1>
+    <form onsubmit="return false;">
+      <label for="">Category Name</label>
+      <input type="text" id="categoryName" />
+      <button onclick="createCategory()">Add</button>
+    </form>
+
+    <h1>Create Orchid</h1>
+    <form onsubmit="return false;">
+      <label for="">Name</label>
+      <input type="text" id="name" />
+
+      <label for="">Image</label>
+      <input type="text" id="image" />
+
+      <label for="">Is Natural</label>
+      <select id="isNatural">
+        <option value="true">true</option>
+        <option value="false">false</option>
+      </select>
+
+      <label for="">Origin</label>
+      <input type="text" id="origin" />
+
+      <label for="">Category</label>
+      <select id="category">
+        
+      </select>
+      <button onclick="createOrchid()">Add Orchid</button>
+    </form>
+  </body>
+  <script>
+    function createCategory() {
+      const categoryName = document.getElementById('categoryName');
+      const token = localStorage.getItem('jwt');
+
+      const data = {
+        categoryName: categoryName.value,
+      };
+      fetch('/categories', {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          if (result.statusCode) {
+            alert(result.message);
+          } else {
+            window.location.reload();
+            console.log(result);
+          }
+        })
+        .catch((error) => {
+          alert(error.message);
+        });
+    }
+  
+    // get categories 
+    fetch("/categories")
+    .then(res=> res.json())
+    .then(result => { 
+        let sl_category = document.getElementById("category")
+        let html = ``;
+        for (let c of result){
+            html += `<option value="${c._id}">${c.categoryName}</option>`
+        }
+        sl_category.innerHTML = html;
+
+    })
+    .catch(error => {
+        alert(error.message);
+    })
+  
+    function createOrchid(){
+        const token = localStorage.getItem("jwt");
+        const name = document.getElementById("name").value;
+        const image = document.getElementById("image").value;
+        const isNatural = document.getElementById("isNatural").value;
+        const origin = document.getElementById("origin").value;
+        const category = document.getElementById("category").value;
+        
+        const data = {
+            name,
+            image, 
+            isNatural,
+            origin,
+            category
+        }
+        console.log(data);
+        fetch('/orchid', {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          if (result.statusCode) {
+            alert(result.message);
+          } else {
+            window.location.reload();
+            console.log(result);
+          }
+        })
+        .catch((error) => {
+          alert(error.message);
+        });
+    }
+ 
+    //get orchid (giống get categories)
+ </script>
+</html>

@@ -1,21 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<body>
-    <form onsubmit="return false;"> 
-        <input id="name" type="text" placeholder="name" name="name" />
-        <input id="yob" type="text" placeholder="yob" name="yob" />
-        <button onclick="update()">Update information</button>
-      </form>
-</body>
-<script>
-    
-    function update(){
+  </head>
+  <body>
+    <h3 id="username"></h3>
+    <form onsubmit="return false;">
+      <input id="name" type="text" placeholder="name" name="name" />
+      <input id="yob" type="text" placeholder="yob" name="yob" />
+      <button onclick="update()">Update information</button>
+    </form>
+  </body>
+  <script>
+    const username = document.getElementById('username');
+    const name = document.getElementById('name');
+    const yob = document.getElementById('yob');
+    const token = localStorage.getItem('jwt');
 
+    fetch('/accounts/detail', {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        name.value = result.name;
+        yob.value = result.yob;
+        username.innerHTML = 'Welcome ' + result.username;
+      })
+      .catch((error) => {
+        alert(error);
+      });
+
+    function update() {
+      const data = { name: name.value, yob: yob.value };
+      console.log(data);
+      fetch('/accounts', {
+        method: 'PATCH',
+        headers: {
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          if (result.statusCode) {
+            alert(result.message);
+          } else {
+            window.location.reload();
+            console.log(result);
+          }
+        })
+        .catch((error) => {
+          alert(error.message);
+        });
     }
-</script>
+  </script>
 </html>

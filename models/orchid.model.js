@@ -2,8 +2,8 @@ const mongoose = require('mongoose');
 
 const commentSchema = mongoose.Schema(
   {
-    rating: { type: Number, min: 1, max: 5, require: true },
-    comment: { type: String, require: true },
+    rating: { type: Number, min: 1, max: 5, required: true },
+    comment: { type: String, required: true },
     author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'account',
