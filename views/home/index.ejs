@@ -1,12 +1,67 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-</head>
-<body>
+  </head>
+  <body>
     <a href="/accounts/change-information">change information</a>
     <a href="/">change password</a>
-</body>
+
+    <h1>Orchids</h1>
+    <input id="search_by_name" type="text" placeholder="Search by name" />
+    <button onclick="search()">Search</button>
+    <table border="1" cellspacing="0">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Image</th>
+          <th>Category</th>
+          <th>Function</th>
+        </tr>
+      </thead>
+      <tbody id="tbody_orchids"></tbody>
+    </table>
+  </body>
+  <script>
+    //get orchid (giống get categories)
+    function getOrchid(name = '') {
+      let url = '/orchid';
+      if (name){
+        url += `?name=${name}`;
+      }
+      fetch(url)
+        .then((res) => res.json())
+        .then((result) => {
+          let tbody_orchids = document.getElementById('tbody_orchids');
+          let html = ``;
+          for (let orchid of result) {
+            html += `
+            <tr> 
+              <td>${orchid.name}</td>
+              <td>
+                <img width="200" src="${orchid.image}" />  
+              </td> 
+              <td>${orchid.category.categoryName}</td>  
+              <td>
+                <button>
+                    <a href="/orchid/${orchid._id}">Detail</a>
+                </button>  
+              </td>
+            </tr>
+          `;
+          }
+          tbody_orchids.innerHTML = html;
+        })
+        .catch((error) => alert(error.message));
+    }
+
+    getOrchid();
+
+    function search(){
+      let search_by_name = document.getElementById("search_by_name").value;
+      getOrchid(search_by_name)
+    }
+  </script>
 </html>

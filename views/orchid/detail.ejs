@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <% if (orchid) { %>
+    <h2><%= orchid.name %></h2>
+    <img width="200" src="<%= orchid.image %>" alt="" />
+    <p>Is Natural: <%= orchid.isNatural %></p>
+    <p>Origin: <%= orchid.origin %></p>
+    <p>Category: <%= orchid.category.categoryName %></p>
+
+    <!-- tạo comment  -->
+    <h2>Comment</h2>
+    <input id="rate" type="number" placeholder="rate" />
+    <input id="comment" type="text" placeholder="comment" />
+    <button onclick="comment('<%= orchid._id %>')">Send</button>
+
+    <!-- hiển thị commnet  -->
+    <ul>
+        <% orchid.comments.forEach(function(comment){ %>
+        <li>
+            <h3><%= comment.author.name %></h3>
+            <b><%= comment.rating %></b>
+            <p><%= comment.comment %></p>
+        </li>
+        <% }); %>
+    </ul>
+
+    <% } %>
+  </body>
+  <script>
+    function comment(id) {
+      let rating = document.getElementById('rate').value;
+      let comment = document.getElementById('comment').value;
+
+      let token = localStorage.getItem('jwt');
+
+      const data = {
+        rating: Number(rating),
+        comment,
+      };
+
+      fetch(`/orchid/comments/${id}`, {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+        .then((res) => res.json())
+        .then((result) => {
+          if (result.statusCode) {
+            alert(result.message);
+          } else {
+            window.location.reload();
+          }
+        })
+        .catch((error) => {
+          alert(error.message);
+        });
+    }
+  </script>
+</html>

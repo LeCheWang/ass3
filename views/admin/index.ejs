@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
   </head>
+
   <body>
     <h1>Welcome admin</h1>
 
@@ -33,11 +34,40 @@
       <input type="text" id="origin" />
 
       <label for="">Category</label>
-      <select id="category">
-        
-      </select>
+      <select id="category"></select>
       <button onclick="createOrchid()">Add Orchid</button>
     </form>
+
+    <h1>Orchids</h1>
+    <table border="1" cellspacing="0">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Image</th>
+          <th>Is Natural</th>
+          <th>Origin</th>
+          <th>Category</th>
+          <th>Function</th>
+        </tr>
+      </thead>
+      <tbody id="tbody_orchids"></tbody>
+    </table>
+
+    <h1>Accounts</h1>
+    <table border="1" cellspacing="0">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Username</th>
+          <th>Name</th>
+          <th>Yob</th>
+          <th>Is Admin</th>
+          <th>Function</th>
+        </tr>
+      </thead>
+      <tbody id="tbody_accounts"></tbody>
+    </table>
   </body>
   <script>
     function createCategory() {
@@ -68,40 +98,39 @@
           alert(error.message);
         });
     }
-  
-    // get categories 
-    fetch("/categories")
-    .then(res=> res.json())
-    .then(result => { 
-        let sl_category = document.getElementById("category")
+
+    // get categories
+    fetch('/categories')
+      .then((res) => res.json())
+      .then((result) => {
+        let sl_category = document.getElementById('category');
         let html = ``;
-        for (let c of result){
-            html += `<option value="${c._id}">${c.categoryName}</option>`
+        for (let c of result) {
+          html += `<option value="${c._id}">${c.categoryName}</option>`;
         }
         sl_category.innerHTML = html;
-
-    })
-    .catch(error => {
+      })
+      .catch((error) => {
         alert(error.message);
-    })
-  
-    function createOrchid(){
-        const token = localStorage.getItem("jwt");
-        const name = document.getElementById("name").value;
-        const image = document.getElementById("image").value;
-        const isNatural = document.getElementById("isNatural").value;
-        const origin = document.getElementById("origin").value;
-        const category = document.getElementById("category").value;
-        
-        const data = {
-            name,
-            image, 
-            isNatural,
-            origin,
-            category
-        }
-        console.log(data);
-        fetch('/orchid', {
+      });
+
+    function createOrchid() {
+      const token = localStorage.getItem('jwt');
+      const name = document.getElementById('name').value;
+      const image = document.getElementById('image').value;
+      const isNatural = document.getElementById('isNatural').value;
+      const origin = document.getElementById('origin').value;
+      const category = document.getElementById('category').value;
+
+      const data = {
+        name,
+        image,
+        isNatural,
+        origin,
+        category,
+      };
+      console.log(data);
+      fetch('/orchid', {
         method: 'POST',
         headers: {
           Authorization: 'Bearer ' + token,
@@ -122,7 +151,67 @@
           alert(error.message);
         });
     }
- 
+
     //get orchid (giống get categories)
- </script>
+    fetch('/orchid')
+      .then((res) => res.json())
+      .then((result) => {
+        let tbody_orchids = document.getElementById('tbody_orchids');
+        let html = ``;
+        for (let orchid of result) {
+          html += `
+            <tr>
+              <td>${orchid._id}</td>
+              <td>${orchid.name}</td>
+              <td>
+                <img width="200" src="${orchid.image}" />  
+              </td>
+              <td>${orchid.isNatural}</td>
+              <td>${orchid.origin}</td>
+              <td>${orchid.category.categoryName}</td>  
+              <td>
+                <button>Edit</button>  
+                <button>Delete</button>  
+              </td>
+            </tr>
+          `;
+        }
+        tbody_orchids.innerHTML = html;
+      })
+      .catch((error) => alert(error.message));
+
+    //get accounts (giống get categories)
+    const token = localStorage.getItem('jwt');
+    fetch('/accounts', {
+      method: 'GET',
+      headers: {
+        Authorization: 'Bearer ' + token,
+        'Content-Type': 'application/json',
+      },
+    })
+      .then((res) => res.json())
+      .then((result) => {
+        let tbody_accounts = document.getElementById('tbody_accounts');
+        let html = ``;
+        for (let account of result) {
+          html += `
+            <tr>
+              <td>${account._id}</td>
+              <td>${account.username}</td>
+              <td>
+                 ${account.name}
+              </td>
+              <td>${account.yob}</td>
+              <td>${account.isAdmin}</td> 
+              <td>
+                <button>Edit</button>  
+                <button>Delete</button>  
+              </td>
+            </tr>
+          `;
+        }
+        tbody_accounts.innerHTML = html;
+      })
+      .catch((error) => alert(error.message));
+  </script>
 </html>

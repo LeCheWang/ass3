@@ -41,4 +41,7 @@ const orchidSchema = mongoose.Schema(
   { timestamps: true },
 );
 
-module.exports = mongoose.model('orchid', orchidSchema);
+module.exports = {
+  orchidModel: mongoose.model('orchid', orchidSchema),
+  commentModel: mongoose.model('comment', commentSchema),
+};
